@@ -143,6 +143,10 @@ button{
         {% csrf_token %} 
         <h3>Signup Here</h3>
 
+        {% if error %}
+        <p style="color:#ffb3b3; text-align:center; margin-top:10px;">{{ error }}</p>
+        {% endif %}
+
         <label for="username">Username</label>
         <input type="text" placeholder="Username" name="username" id="username">
 
@@ -161,3 +165,4 @@ button{
     </form>
 </body>
 </html>
+

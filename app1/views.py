@@ -13,14 +13,25 @@ def SignupPage(request):
         email=request.POST.get('email')
         pass1=request.POST.get('password1')
         pass2=request.POST.get('password2')
+        # Basic validation and duplicate-check to avoid IntegrityError
+        if not uname or not pass1:
+            return render(request, 'signup.html', {'error': 'Username and password are required.'})
 
-        if pass1!=pass2:
-            return HttpResponse("Your password and confrom password are not Same!!")
-        else:
+        if pass1 != pass2:
+            return render(request, 'signup.html', {'error': 'Your password and confirm password are not the same.'})
 
-            my_user=User.objects.create_user(uname,email,pass1)
+        if User.objects.filter(username=uname).exists():
+            # Return an error message instead of attempting to create a duplicate user
+            return render(request, 'signup.html', {'error': 'Username already exists. Please choose a different username.'})
+
+        try:
+            my_user = User.objects.create_user(uname, email, pass1)
             my_user.save()
-            return redirect('login')
+        except Exception as e:
+            # Fallback: render the form with the error message
+            return render(request, 'signup.html', {'error': str(e)})
+
+        return redirect('login')
         
 
 
